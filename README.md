@@ -20,6 +20,10 @@ The **Emoji Sentiment API** is a simple FastAPI-based web service that provides 
 
 | Method | Endpoint | Description |
 |--------|---------|-------------|
+| GET | `/` | Get API documentation |
+| GET | `/intro` | Get an introduction to the API |
+| GET | `/whats-emoji` | Get information about what an emoji is |
+| GET | `/history` | Get historical information about emojis |
 | GET | `/emojis` | Get a list of supported emojis |
 | GET | `/categories` | Get a list of sentiment categories |
 | GET | `/random-emoji` | Get a random emoji with its sentiment |
