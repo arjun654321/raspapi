@@ -30,6 +30,9 @@ The **Emoji Sentiment API** is a simple FastAPI-based web service that provides 
 | GET | `/all-emoji-sentiment` | Get all emojis with their sentiment categories |
 | POST | `/emoji-category` | Get sentiment of a specific emoji (JSON: `{ "emoji": "😀" }`) |
 | POST | `/add-emoji` | Add a new emoji with a sentiment category (JSON: `{ "emoji": "😎", "category": "cool" }`) |
+| POST | `/emoji-category-nlp`|  Get sentiment of a specific emoji (JSON: `{ "emoji": "😀" }`) using AI/NLP |
+| POST | `/text-to-emoji`|  Get emojis from a text (JSON: `{ "text": "I am hapay today" }`) |
+
 
 
 
