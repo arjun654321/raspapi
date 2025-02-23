@@ -4,6 +4,8 @@ from pydantic import BaseModel
 import random
 from typing import List, Dict
 from scalar_fastapi import get_scalar_api_reference
+from emoji import demojize,emojize
+import re
 
 app = FastAPI()
 
@@ -37,7 +39,7 @@ def root():
 def intro():
     return {
         "Message": (
-            "Welcome to the Emoji Sentiment API! \n (Currently, this API works only for the emojis mentioned in the code, and emojis are premapped to the sentiment categories. In future enhancements, an AI model will be used to predict the sentiment of the emoji.) \n To get the information on what is emoji, use /whats-emoji endpoint. \n To get the information on emoji history, use /history endpoint. \n To get the list of supported emojis, use /emojis endpoint. \n To get the list of sentiment categories, use /categories endpoint. \n To get a random emoji and its sentiment, use /random-emoji endpoint. \n To get all emojis and their category, use /all-emoji-sentiment endpoint. \n To get the sentiment of a specific emoji, use /emoji-category endpoint, post request with JSON data {'emoji': '<emoji>'}. \n To add an emoji and its sentiment category, use /add-emoji endpoint, post request with JSON data {'emoji': '<emoji>', 'category': '<category>'}.\n"
+            "Welcome to the Emoji Sentiment API! \n (Currently, this API works only for the emojis mentioned in the code, and emojis are premapped to the sentiment categories. In future enhancements, an AI model will be used to predict the sentiment of the emoji.) \n To get the information on what is emoji, use /whats-emoji endpoint. \n To get the information on emoji history, use /history endpoint. \n To get the list of supported emojis, use /emojis endpoint. \n To get the list of sentiment categories, use /categories endpoint. \n To get a random emoji and its sentiment, use /random-emoji endpoint. \n To get all emojis and their category, use /all-emoji-sentiment endpoint. \n To get the sentiment of a specific emoji, use /emoji-category endpoint, post request with JSON data {'emoji': '<emoji>'}. \n To add an emoji and its sentiment category, use /add-emoji endpoint, post request with JSON data {'emoji': '<emoji>', 'category': '<category>'}.\n  To get the sentiment of a specific emoji by using AI/nlp, use /emoji-category-nlp endpoint, post request with JSON data {'emoji': '<emoji>'}. \n To get the emoji for a given text, use /text-to-emoji endpoint, post request with JSON data {'text': '<text>'}.  "
         )
     }
 
@@ -110,3 +112,41 @@ def add_emoji(request: AddEmojiRequest):
 
     emoji_category[emoji] = category
     return {"message": f"emoji '{emoji}' added with category '{category}'."}
+
+
+
+
+
+
+
+@app.post("/emoji-category-nlp")
+def detect_using_nlp(request: EmojiRequest):
+    emoji_text = demojize(request.emoji) 
+    
+    if emoji_text.startswith(":") and emoji_text.endswith(":"):
+        words = re.findall(r'\b\w+\b', emoji_text)  
+        if words:
+            return {"emoji": request.emoji, "category": words[0]}
+    
+    return {"emoji": request.emoji, "category": "unknown"}
+
+
+
+
+@app.post("/text-to-emoji")
+def text_to_emoji(request: TextRequest):
+    
+    text = request.text.lower()
+    
+
+    category = "neutral"
+    if any(word in text for word in ["happy", "joy", "excited", "good"]):
+        category = "happy"
+    elif any(word in text for word in ["sad", "unhappy", "depressed", "down"]):
+        category = "sad"
+    elif any(word in text for word in ["angry", "mad", "furious"]):
+        category = "angry"
+
+
+    emoji = [key for key, value in emoji_category.items() if value == category]
+    return {"text": text, "category": category, "emoji": emoji[0] if emoji else "no emoji found"}
