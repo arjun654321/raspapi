@@ -25,6 +25,9 @@ class AddEmojiRequest(BaseModel):
     emoji: str
     category: str
 
+class TextRequest(BaseModel):
+    text: str
+
 
 @app.get("/")
 def root():
